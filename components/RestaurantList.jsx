@@ -1,37 +1,31 @@
 import { useEffect, useState } from 'react';
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import { View, ScrollView, StyleSheet } from 'react-native';
 import RestaurantCard from './RestaurantCard';
+import Random from './Random';
 
-export default function RestaurantList() {
+export default function RestaurantList({ navigation }) {
   const [foodList, setFoodList] = useState()
 
   useEffect(() => {
     fetch('https://my-first-firestore-bc.web.app/restaurants')
       .then(resp => resp.json())
-      .then(setFoodList)
+      .then(data => setFoodList(data.sort((a,b) => b.rating - a.rating)))
       .catch(alert)
   }, [])
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Restaurant List</Text>
       <ScrollView style={styles.list}>
         {foodList && foodList.map(food => (
-          <RestaurantCard food={food} key={food.id}/>
+          <RestaurantCard food={food} key={food.id} navigation={navigation}/>
           ))}
       </ScrollView>
+      <Random navigation={navigation} foodList={foodList} />
     </View>
   )
 }
 
 const styles = StyleSheet.create({
-  title: {
-    fontSize: 30,
-    fontWeight: 700,
-    marginVertical: 8,
-    color: '#151B54',
-  },
-
   list: {
     width: '100%',
     // borderColor: 'red',
@@ -41,10 +35,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     //backgroundColor: 'pink',
-    marginTop: 40,
-    width: '90%',
-    marginBottom: 26,
+    width: '100%',
     alignItems: 'center',
     justifyContent: 'flex-start',
+    backgroundColor: 'skyblue',
+    padding: 16,
   },
 })
